@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>A letter for baby Diduuu 💌</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Nunito:wght@300;400;600&display=swap" rel="stylesheet"/>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --rose: #e8607a;
+    --rose-light: #fce4ec;
+    --peach: #ff8a65;
+    --gold: #f5a623;
+    --cream: #fffdf7;
+    --ink: #3b2a2a;
+    --muted: #9e7b7b;
+    --bg: #fff5f0;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--bg);
+    min-height: 100vh;
+    overflow-x: hidden;
+    cursor: default;
+  }
+
+  .petals { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+  .petal {
+    position: absolute;
+    width: 10px; height: 10px;
+    border-radius: 50% 0 50% 0;
+    opacity: 0.18;
+    animation: petalFall linear infinite;
+  }
+  @keyframes petalFall {
+    0%   { transform: translateY(-20px) rotate(0deg); opacity: 0; }
+    10%  { opacity: 0.18; }
+    90%  { opacity: 0.12; }
+    100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+  }
+  #screen-envelope {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    z-index: 1;
+    padding: 2rem;
+  }
+
+  .to-text {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: clamp(1rem, 3vw, 1.3rem);
+    color: var(--muted);
+    margin-bottom: 2.5rem;
+    letter-spacing: 0.04em;
+  }
+
+  .envelope-wrap {
+    position: relative;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .envelope-wrap:hover .env-flap { transform: rotateX(-160deg); }
+  .envelope-wrap.opening .env-flap { transform: rotateX(-160deg); }
+  .envelope-wrap.opening { animation: envShake 0.4s ease 0.2s; }
+
+  @keyframes envShake {
+    0%,100% { transform: rotate(0deg); }
+    25%  { transform: rotate(-3deg); }
+    75%  { transform: rotate(3deg); }
+  }
+
+  .env-body {
+    width: clamp(260px, 60vw, 360px);
+    height: clamp(170px, 40vw, 230px);
+    background: linear-gradient(145deg, #fff9f6, #fceae8);
+    border: 2px solid #f5c8c0;
+    border-radius: 8px;
+    position: relative;
+    box-shadow: 0 12px 40px rgba(232,96,122,0.18);
+    overflow: visible;
+  }
+
+  .env-flap {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    height: 0;
+    border-left: calc(clamp(260px,60vw,360px)/2) solid transparent;
+    border-right: calc(clamp(260px,60vw,360px)/2) solid transparent;
+    border-top: calc(clamp(170px,40vw,230px)/2.3) solid #f5b8b4;
+    transform-origin: top center;
+    transition: transform 0.5s cubic-bezier(.4,0,.2,1);
+    z-index: 3;
+    filter: drop-shadow(0 3px 4px rgba(0,0,0,0.08));
+  }
+
+  .env-bottom-left {
+    position: absolute;
+    bottom: 0; left: 0;
+    width: 0; height: 0;
+    border-bottom: calc(clamp(170px,40vw,230px)/2) solid #fde4e0;
+    border-right: calc(clamp(260px,60vw,360px)/2) solid transparent;
+  }
+  .env-bottom-right {
+    position: absolute;
+    bottom: 0; right: 0;
+    width: 0; height: 0;
+    border-bottom: calc(clamp(170px,40vw,230px)/2) solid #fde4e0;
+    border-left: calc(clamp(260px,60vw,360px)/2) solid transparent;
+  }
+
+  .env-seal {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 52px; height: 52px;
+    background: var(--rose);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    box-shadow: 0 4px 12px rgba(232,96,122,0.4);
+    z-index: 4;
+    transition: transform 0.3s;
+  }
+  .envelope-wrap:hover .env-seal { transform: translate(-50%, -50%) scale(1.1); }
+  .envelope-wrap.opening .env-seal { opacity: 0; transition: opacity 0.2s; }
+
+  .click-hint {
+    margin-top: 1.5rem;
+    font-size: 0.9rem;
+    color: var(--muted);
+    display: flex; align-items: center; gap: 8px;
+    animation: bounce 1.5s ease-in-out infinite;
+  }
+  @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-5px)} }
+
+  .stars-deco {
+    position: absolute;
+    top: -18px; right: -18px;
+    font-size: 22px;
+    animation: spin 6s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  #screen-letter {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    padding: 3rem 1rem 5rem;
+    position: relative;
+    z-index: 1;
+    animation: fadeUp 0.7s ease both;
+  }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(40px)} to{opacity:1;transform:translateY(0)} }
+
+  .paper {
+    background: var(--cream);
+    border: 1px solid #f0ddd6;
+    border-radius: 4px;
+    max-width: 600px;
+    width: 100%;
+    padding: clamp(1.5rem, 5vw, 3rem) clamp(1.5rem, 6vw, 3.5rem);
+    box-shadow: 0 20px 60px rgba(200,100,80,0.12), 0 2px 6px rgba(0,0,0,0.04);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .paper::before {
+    content: '';
+    position: absolute;
+    left: 52px; top: 0; bottom: 0;
+    width: 1px;
+    background: #f9d8d2;
+  }
+
+  .paper-lines {
+    position: absolute;
+    inset: 0;
+    background-image: repeating-linear-gradient(
+      transparent, transparent 31px,
+      #fce8e4 31px, #fce8e4 32px
+    );
+    background-size: 100% 32px;
+    background-position: 0 48px;
+    pointer-events: none;
+    opacity: 0.5;
+  }
+
+  .letter-date {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 0.85rem;
+    color: var(--muted);
+    text-align: right;
+    margin-bottom: 1.5rem;
+    position: relative;
+  }
+
+  .letter-greeting {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.4rem, 4vw, 1.8rem);
+    color: var(--rose);
+    margin-bottom: 1.8rem;
+    position: relative;
+  }
+
+  .para {
+    font-size: clamp(0.92rem, 2.5vw, 1.05rem);
+    line-height: 2;
+    color: var(--ink);
+    margin-bottom: 1.4rem;
+    position: relative;
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .para.visible { opacity: 1; transform: translateY(0); }
+  .para em { font-style: italic; color: var(--rose); }
+  .para strong { font-weight: 600; color: var(--peach); }
+  .para .ifs { font-weight: 600; color: #1a73e8; }
+
+  .divider-hearts {
+    text-align: center;
+    font-size: 1.1rem;
+    letter-spacing: 10px;
+    margin: 1.5rem 0;
+    color: var(--rose-light);
+    filter: none;
+    opacity: 0;
+    transition: opacity 0.6s;
+    position: relative;
+  }
+  .divider-hearts.visible { opacity: 1; }
+
+  .letter-sign {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 1.2rem;
+    color: var(--ink);
+    margin-top: 1rem;
+    opacity: 0;
+    transition: opacity 0.8s ease 0.3s;
+    position: relative;
+  }
+  .letter-sign.visible { opacity: 1; }
+
+  /* ── FORGIVE BUTTON ── */
+  .forgive-section {
+    margin-top: 2.5rem;
+    text-align: center;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+  .forgive-section.visible { opacity: 1; transform: translateY(0); }
+
+  .forgive-q {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: clamp(1.1rem, 3vw, 1.4rem);
+    color: var(--ink);
+    margin-bottom: 1.5rem;
+  }
+
+  .btn-row { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+
+  .btn-yes {
+    background: var(--rose);
+    color: white;
+    border: none;
+    padding: 14px 36px;
+    border-radius: 50px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 1.05rem;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(232,96,122,0.4);
+    transition: transform 0.2s, box-shadow 0.2s;
+    letter-spacing: 0.02em;
+  }
+  .btn-yes:hover { transform: scale(1.06); box-shadow: 0 10px 28px rgba(232,96,122,0.5); }
+
+  .btn-no {
+    background: transparent;
+    color: var(--muted);
+    border: 1.5px solid #e0c8c4;
+    padding: 14px 28px;
+    border-radius: 50px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 1.05rem;
+    cursor: pointer;
+    transition: all 0.15s;
+    position: relative;
+  }
+
+  /* ── IFS GLOBE BADGE ── */
+  .ifs-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #e8f0fe;
+    color: #1a73e8;
+    border: 1px solid #b5d4f4;
+    border-radius: 50px;
+    padding: 6px 16px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin: 0.5rem 0;
+    position: relative;
+  }
+  .globe-spin { display: inline-block; animation: spin 4s linear infinite; }
+
+  /* ── CELEBRATION ── */
+  #screen-celebrate {
+    display: none;
+    min-height: 100vh;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+    padding: 2rem;
+    animation: fadeUp 0.8s ease both;
+  }
+
+  .celebrate-emoji { font-size: clamp(3rem, 10vw, 5rem); animation: heartbeat 0.8s ease-in-out infinite; }
+  @keyframes heartbeat { 0%,100%{transform:scale(1)} 50%{transform:scale(1.2)} }
+
+  .celebrate-h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 6vw, 3.2rem);
+    color: var(--rose);
+    margin: 1rem 0 0.5rem;
+    line-height: 1.2;
+  }
+  .celebrate-sub {
+    font-size: clamp(0.95rem, 2.5vw, 1.15rem);
+    color: var(--muted);
+    max-width: 420px;
+    line-height: 1.8;
+    margin-bottom: 2rem;
+  }
+
+  .confetti-canvas {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 100;
+  }
+
+  .flag-bar {
+    display: flex;
+    width: 200px;
+    height: 8px;
+    border-radius: 99px;
+    overflow: hidden;
+    margin: 1.5rem auto 0;
+  }
+  .flag-bar div { flex: 1; }
+  @keyframes noJiggle { 0%,100%{transform:none} 50%{transform:rotate(-5deg) scale(0.95)} }
+  .floating-hearts {
+    position: fixed; inset: 0;
+    pointer-events: none;
+    z-index: 50;
+    display: none;
+  }
+  .progress {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin: 2rem 0 0;
+    position: relative;
+  }
+  .dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: #f5c8c0;
+    transition: background 0.4s, transform 0.4s;
+  }
+  .dot.active { background: var(--rose); transform: scale(1.4); }
+</style>
+</head>
+<body>
+<div class="petals" id="petals"></div>
+<canvas class="confetti-canvas" id="confettiCanvas"></canvas>
+
+<!-- ═══════════════════════════════
+     SCREEN 1 — ENVELOPE
+═══════════════════════════════ -->
+<div id="screen-envelope">
+  <p class="to-text">✉️ &nbsp;You have a letter Baby Diduu...</p>
+
+  <div class="envelope-wrap" id="envWrap" onclick="openEnvelope()">
+    <div class="stars-deco">✨</div>
+    <div class="env-body">
+      <div class="env-bottom-left"></div>
+      <div class="env-bottom-right"></div>
+      <div class="env-flap"></div>
+      <div class="env-seal">💌</div>
+    </div>
+  </div>
+
+  <p class="click-hint">👆 tap the envelope to open</p>
+
+  <div class="progress">
+    <div class="dot active" id="d1"></div>
+    <div class="dot" id="d2"></div>
+    <div class="dot" id="d3"></div>
+  </div>
+</div>
+<div id="screen-letter">
+  <div class="paper">
+    <div class="paper-lines"></div>
+    <div class="letter-date" id="letterDate"></div>
+    <div class="letter-greeting">My dearest Beautiful IFS diduuuu ,</div>
+    <p class="para" id="p1">
+      I'm writing this because I <em>need</em> you to know that what i said was completely entirely wrong of me. That sarcastic comment about employment was supposed to be a silly joke between sibling but it landed like an arrow and <em>Im so so so so sorry for that.</em>
+    </p>
+    <p class="para" id="p2">
+      The truth the whole truth is that i look at you and i feel <em>genuine awe.</em> You chose the hardest road. You are not just preparing for an exam,you are preparing to carry the entire weight of <strong>India's voice</strong> on the world stage.
+    </p>
+    <div class="divider-hearts" id="dh1">❤ ❤ ❤</div>
+    <p class="para" id="p3">
+      <span class="ifs">🌍 Indian Foreign Service.</span> Think about that. While the rest of us scroll reels,you are memorizing international treaties,understanding geopolitics and shaping your mind into something extraordinary. That takes a different kind of courage altogether.
+    </p>
+    <p class="para" id="p4">
+      I was totally careless with my words and you deserved better. Ik well enough that employment isn't a measure of worth. Your <em>dedication, your discipline, your dream</em>those are things most people will never even touch in a lifetime.
+    </p>
+    <div class="divider-hearts" id="dh2">🇮🇳 &nbsp; 🌟 &nbsp; 🇮🇳</div>
+    <p class="para" id="p5">
+      One day I am going to point at a newspaper headline - <em>"India's top diplomat signs historic accord"</em> — and tell everyone around me: <strong>that's my babyyy behenuuu </strong> And I am going to be the proudest person alive.
+    </p>
+
+    <p class="para" id="p6">
+      Until that day — I'm in your corner. Always. Silently cheering on every page you turn. Forgive your silly sibling? 🙏
+    </p>
+
+    <div class="ifs-badge" id="ifsBadge" style="opacity:0;transition:opacity 0.8s;">
+      <span class="globe-spin">🌍</span> Future IFS Officer — making India proud
+    </div>
+
+    <div class="letter-sign" id="lSign">
+      — With all my love &amp; pride,<br/>
+      <span style="font-size:1.4rem;">Your Kalota kuchupuchu bhai 🤍</span>
+    </div>
+  </div>
+  <div class="forgive-section" id="forgiveSection">
+    <p class="forgive-q">"So... do you forgive me?" 🥺</p>
+    <div class="btn-row">
+      <button class="btn-yes" onclick="celebrate()">Yes, I forgive you! 💛</button>
+      <button class="btn-no" id="btnNo" onmouseover="runAway(this)" onclick="runAway(this)">Nope 😤</button>
+    </div>
+  </div>
+
+  <div class="progress">
+    <div class="dot" id="d1b"></div>
+    <div class="dot active" id="d2b"></div>
+    <div class="dot" id="d3b"></div>
+  </div>
+</div>
+<div id="screen-celebrate">
+  <div class="celebrate-emoji">🎉</div>
+  <h1 class="celebrate-h1">She said YES! 💛</h1>
+  <p class="celebrate-sub">
+    Love wins,always. 🌟<br/>
+    Here is a biggest tight huggies from your kaluva .<br/>
+    You going to change the world — and I will be there cheering her on.
+  </p>
+  <div class="ifs-badge" style="font-size:0.95rem;padding:10px 22px;">
+    <span class="globe-spin">🌍</span> Future IFS Officer — India's pride 🇮🇳
+  </div>
+  <div class="flag-bar" style="margin-top:2rem;">
+    <div style="background:#ff9933"></div>
+    <div style="background:#ffffff;border:1px solid #eee"></div>
+    <div style="background:#138808"></div>
+  </div>
+  <div class="progress" style="margin-top:2rem;">
+    <div class="dot" id="d1c"></div>
+    <div class="dot" id="d2c"></div>
+    <div class="dot active" id="d3c"></div>
+  </div>
+</div>
+<script>
+const petalColors = ['#f5a0b0','#ffc0cb','#ffb347','#ff8fab','#ffd6e0'];
+const petalsEl = document.getElementById('petals');
+for(let i=0;i<28;i++){
+  const p = document.createElement('div');
+  p.className = 'petal';
+  p.style.cssText = `
+    left:${Math.random()*100}%;
+    background:${petalColors[i%petalColors.length]};
+    width:${7+Math.random()*8}px;
+    height:${7+Math.random()*8}px;
+    animation-duration:${6+Math.random()*10}s;
+    animation-delay:${-Math.random()*12}s;
+    opacity:${0.1+Math.random()*0.15};
+    border-radius: ${Math.random()>0.5?'50% 0 50% 0':'50%'};
+  `;
+  petalsEl.appendChild(p);
+}
+const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+const now = new Date();
+document.getElementById('letterDate').textContent =
+  `${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()}`;
+function openEnvelope(){
+  const wrap = document.getElementById('envWrap');
+  wrap.classList.add('opening');
+  setTimeout(()=>{
+    document.getElementById('screen-envelope').style.display='none';
+    const sl = document.getElementById('screen-letter');
+    sl.style.display='flex';
+    revealLetter();
+    window.scrollTo({top:0,behavior:'instant'});
+  }, 700);
+}
+function revealLetter(){
+  const ids = ['p1','p2','dh1','p3','p4','dh2','p5','p6','ifsBadge','lSign','forgiveSection'];
+  const delays = [100,500,900,1100,1600,2000,2200,2700,3100,3300,3800];
+  ids.forEach((id,i)=>{
+    setTimeout(()=>{
+      const el = document.getElementById(id);
+      if(!el) return;
+      el.classList.add('visible');
+      if(id==='ifsBadge') el.style.opacity='1';
+    }, delays[i]);
+  });
+}
+let noMoves = 0;
+function runAway(btn){
+  noMoves++;
+  const maxX = window.innerWidth - 160;
+  const maxY = window.innerHeight - 80;
+  const x = Math.random()*maxX;
+  const y = Math.random()*maxY;
+  btn.style.position='fixed';
+  btn.style.left = x+'px';
+  btn.style.top  = y+'px';
+  btn.style.transition='left 0.25s, top 0.25s';
+  if(noMoves===4) btn.textContent='Fine… 😒';
+  if(noMoves===7) btn.textContent='ok ok 🙈';
+  if(noMoves>=10){ btn.style.display='none'; }
+}
+function celebrate(){
+  document.getElementById('screen-letter').style.display='none';
+  const sc = document.getElementById('screen-celebrate');
+  sc.style.display='flex';
+  window.scrollTo({top:0,behavior:'instant'});
+  launchConfetti();
+  setTimeout(launchConfetti, 1200);
+  setTimeout(launchConfetti, 2400);
+}
+function launchConfetti(){
+  const canvas = document.getElementById('confettiCanvas');
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  const pieces = [];
+  const colors = ['#e8607a','#f5a623','#4CAF50','#2196F3','#9C27B0','#ff8fab','#ffb347','#ff9933','#138808'];
+  const shapes = ['rect','circle','heart'];
+  for(let i=0;i<140;i++){
+    pieces.push({
+      x: Math.random()*canvas.width,
+      y: -20 - Math.random()*canvas.height*0.4,
+      size: 6+Math.random()*10,
+      color: colors[Math.floor(Math.random()*colors.length)],
+      vx: (Math.random()-0.5)*4,
+      vy: 2+Math.random()*4,
+      rot: Math.random()*360,
+      rotV: (Math.random()-0.5)*6,
+      shape: shapes[Math.floor(Math.random()*shapes.length)],
+      alpha: 1
+    });
+  }
+
+  function drawHeart(ctx, x, y, s){
+    ctx.save();
+    ctx.translate(x,y);
+    ctx.beginPath();
+    ctx.moveTo(0,-s*0.3);
+    ctx.bezierCurveTo(s*0.5,-s*0.8, s*1.1,-s*0.3, 0, s*0.4);
+    ctx.bezierCurveTo(-s*1.1,-s*0.3, -s*0.5,-s*0.8, 0,-s*0.3);
+    ctx.closePath();
+    ctx.fill();
+    ctx.restore();
+  }
+
+  let frame;
+  function loop(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    let alive = false;
+    pieces.forEach(p=>{
+      p.x += p.vx; p.y += p.vy; p.rot += p.rotV;
+      p.vy += 0.06;
+      if(p.y < canvas.height+40){ alive = true; }
+      ctx.save();
+      ctx.globalAlpha = Math.max(0, p.y < canvas.height*0.75 ? 1 : 1-(p.y-canvas.height*0.75)/(canvas.height*0.25));
+      ctx.translate(p.x,p.y);
+      ctx.rotate(p.rot*Math.PI/180);
+      ctx.fillStyle = p.color;
+      if(p.shape==='rect'){ ctx.fillRect(-p.size/2,-p.size/2,p.size,p.size*0.6); }
+      else if(p.shape==='circle'){ ctx.beginPath(); ctx.arc(0,0,p.size/2,0,Math.PI*2); ctx.fill(); }
+      else { drawHeart(ctx,0,0,p.size); }
+      ctx.restore();
+    });
+    if(alive) frame=requestAnimationFrame(loop);
+    else ctx.clearRect(0,0,canvas.width,canvas.height);
+  }
+  if(frame) cancelAnimationFrame(frame);
+  loop();
+}
+</script>
+</body>
+</html>
